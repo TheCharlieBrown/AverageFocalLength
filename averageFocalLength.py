@@ -2,30 +2,31 @@
 The following program will calculate the average
 focal length used in a group of images
 """
-
+import logging, sys, os
 from exif import Image
-from os import walk
 from math import ceil
 
-path = "C:\\Users\\Dean\\OneDrive - UNSW\\Photography\\Edits"
+# path = "C:\\Users\\Dean\\OneDrive - UNSW\\Photography\\Edits"
+path = input("Enter path to image files: ")
+
+if (not os.path.exists(path)):
+	sys.exit("path does not exist")
+
 
 focalLengths = []
 
-files = []
+fullPaths = []
 
-# Creates a list of files to be used for the calculation
-for (dir_path, dir_names, file_names) in walk(path):
-	files.extend(file_names)
+# Creates a list of filepaths to be used for the calculation
+for dirPath, subDirs, files in os.walk(path):
+	for file in files:
+		if file.lower().endswith(".jpg"):
+			fullPaths.append(os.path.join(dirPath, file))
 
-for file in files:
-	full_path = path + "/" + file
-
+for fullPath in fullPaths:
 	# Opens the image file and reads the EXIF data
-	try:
-		with open(full_path, 'rb') as img_file:
-			img = Image(img_file)
-	except IOError:
-		continue
+	with open(fullPath, 'rb') as imgFile:
+		img = Image(imgFile)
 
 	equivFocalLength = img.get("focal_length_in_35mm_film")
 	standardFocalLength = img.get("focal_length")
@@ -38,6 +39,9 @@ for file in files:
 	elif standardFocalLength is not None:
 		focalLengths.append(standardFocalLength)
 
-averageFocalLength = ceil(sum(focalLengths)/len(focalLengths))
-print(averageFocalLength)
+if (focalLengths):
+	averageFocalLength = ceil(sum(focalLengths)/len(focalLengths))
+	print(averageFocalLength)
+else:
+	print("No focal lengths available")
 
