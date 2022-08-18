@@ -2,12 +2,17 @@
 The following program will calculate the average
 focal length used in a group of images
 """
-import logging, sys, os
+import sys, os
 from exif import Image
 from math import ceil
 
-# path = "C:\\Users\\Dean\\OneDrive - UNSW\\Photography\\Edits"
-path = input("Enter path to image files: ")
+if (len(sys.argv) == 1):
+	path = input("Enter path to image files: ")
+elif (len(sys.argv) == 2):
+	path = sys.argv[1]
+else:
+	sys.exit("Invalid number of arguments provided.\n \
+	Usage: %s [path]\n" % sys.argv[0])
 
 if (not os.path.exists(path)):
 	sys.exit("path does not exist")
